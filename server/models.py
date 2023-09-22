@@ -29,13 +29,21 @@ class RestaurantPizza(db.Model, SerializerMixin):
     price=db.Column(db.Integer)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
- 
+    @validates("price")
+    def validate_price(self, key, value):
+        if not (1 <= value <= 30):
+          raise ValueError("Price must be between 1 and 30")
+        return value
 class Restaurant(db.Model, SerializerMixin):
     __tablename__ = 'restaurants'
    
     
     id = db.Column(db.Integer, primary_key=True)
-    name=db.Column(db.String)
+    name=db.Column(db.String,unique=True,nullable=False)
     address=db.Column(db.String)
     
     restaurant_pizzas = db.relationship('RestaurantPizza', back_populates='restaurant')
+    @validate("name")
+    def validate_name(self,key,name):
+        if name and len(name)>50:
+            raise ValueError("name must be less than 50 words in length")
