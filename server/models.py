@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy.orm import validates
 
 metadata = MetaData(naming_convention={
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
@@ -43,7 +44,7 @@ class Restaurant(db.Model, SerializerMixin):
     address=db.Column(db.String)
     
     restaurant_pizzas = db.relationship('RestaurantPizza', back_populates='restaurant')
-    @validate("name")
+    @validates("name")
     def validate_name(self,key,name):
         if name and len(name)>50:
             raise ValueError("name must be less than 50 words in length")
