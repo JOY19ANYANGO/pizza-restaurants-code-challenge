@@ -19,6 +19,15 @@ db.init_app(app)
 
 api = Api(app)
 
+class Home(Resource):
+    def get(self):
+        response_message = {
+            "message": "WELCOME TO THE PIZZA RESTAURANT API."
+        }
+        return make_response(response_message, 200)
+
+
+api.add_resource(Home, '/')
 
 class Restaurants(Resource):
 

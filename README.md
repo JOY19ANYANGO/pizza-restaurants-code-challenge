@@ -56,7 +56,7 @@ cd server ; python3 app.py
 * Run `python3 seed.py` to populate database.
 
 ## Usage
-The REST API allows  various HTTT methods:
+The REST API allows  various HTTP methods:
    * Retrieve records of all restaurants.
    * Retrieve one restaurant.
    * Delete a restaurant.
