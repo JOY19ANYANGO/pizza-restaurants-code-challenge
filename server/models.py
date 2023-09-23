@@ -11,19 +11,19 @@ db = SQLAlchemy(metadata=metadata)
 
 class Pizza(db.Model, SerializerMixin):
     __tablename__ = 'pizzas'
-
+    serialize_rules = ('-restaurants.pizza', '-restaurant.pizzas')
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     ingredients = db.Column(db.String)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     
-    # Define a back reference to the RestaurantPizza model
-    restaurant_pizza = db.relationship('RestaurantPizza', backref='pizza', overlaps="pizza")
+    restaurants = db.relationship('RestaurantPizza', back_populates='pizza')
     
     
 class RestaurantPizza(db.Model):
     __tablename__ = 'restaurant_pizzas'
+    serialize_rules = ('restaurant', 'pizza')
    
     id = db.Column(db.Integer, primary_key=True)
     pizza_id = db.Column(db.Integer, db.ForeignKey('pizzas.id'))
@@ -31,6 +31,9 @@ class RestaurantPizza(db.Model):
     price = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
+     # Define relationships to Restaurant and Pizza models
+    restaurant = db.relationship('Restaurant', back_populates='pizzas')
+    pizza = db.relationship('Pizza', back_populates='restaurants')
 
     # Define a back reference to the Restaurant model
     @validates("price")
@@ -42,13 +45,14 @@ class RestaurantPizza(db.Model):
 
 class Restaurant(db.Model, SerializerMixin):
     __tablename__ = 'restaurants'
+    serialize_rules = ('-pizzas.restaurant', '-restaurant.pizzas')
    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     address = db.Column(db.String)
     
     # Define a back reference to the RestaurantPizza model
-    restaurant_pizza = db.relationship('RestaurantPizza', backref='restaurant', overlaps="restaurant")
+    pizzas = db.relationship('RestaurantPizza', back_populates='restaurant')
     
     @validates("name")
     def validate_name(self, key, name):
