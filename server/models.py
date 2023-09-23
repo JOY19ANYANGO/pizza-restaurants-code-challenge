@@ -18,18 +18,23 @@ class Pizza(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     
-    restaurant_pizzas = db.relationship('RestaurantPizza', back_populates='pizza')
+    restaurant_pizzas = db.relationship('RestaurantPizza', back_populates='pizza',overlaps="restaurant_pizzas")
     
-class RestaurantPizza(db.Model, SerializerMixin):
+    
+class RestaurantPizza(db.Model):
     __tablename__ = 'restaurant_pizzas'
    
-    
     id = db.Column(db.Integer, primary_key=True)
     pizza_id = db.Column(db.Integer, db.ForeignKey('pizzas.id'))
-    resaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'))
-    price=db.Column(db.Integer)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'))
+    price = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
+
+    # Define the relationship to the Pizza model with a different back reference name
+    pizza = db.relationship('Pizza', backref='restaurant_pizza')
+    restaurant = db.relationship('Restaurant', backref='restaurant_pizza')
+
     @validates("price")
     def validate_price(self, key, value):
         if not (1 <= value <= 30):
@@ -40,10 +45,10 @@ class Restaurant(db.Model, SerializerMixin):
    
     
     id = db.Column(db.Integer, primary_key=True)
-    name=db.Column(db.String,unique=True,nullable=False)
+    name=db.Column(db.String,unique=True, nullable=False)
     address=db.Column(db.String)
     
-    restaurant_pizzas = db.relationship('RestaurantPizza', back_populates='restaurant')
+    restaurant_pizzas = db.relationship('RestaurantPizza', back_populates='restaurant',overlaps="restaurant_pizza")
     @validates("name")
     def validate_name(self,key,name):
         if name and len(name)>50:
