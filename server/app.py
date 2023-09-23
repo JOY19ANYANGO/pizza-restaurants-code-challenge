@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from werkzeug.exceptions import NotFound
 
-from models import db, Restaurant
+from models import db, Restaurant,Pizza,RestaurantPizza
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
@@ -33,20 +33,7 @@ class Restaurants(Resource):
             restaurants.append(restaurant_dict)
         return make_response(jsonify(restaurants), 200)
 
-    # def post(self):
-    #     data = request.get_json()
-
-    #     new_plant = Plant(
-    #         name=data['name'],
-    #         image=data['image'],
-    #         price=data['price'],
-    #     )
-
-    #     db.session.add(new_plant)
-    #     db.session.commit()
-
-    #     return make_response(new_plant.to_dict(), 201)
-
+    
 
 api.add_resource(Restaurants, '/restaurants')
 
@@ -61,18 +48,6 @@ class RestaurantByID(Resource):
         else:
             return make_response(jsonify({"error": "Restaurant not found"}), 404)
 
-#     def patch(self,id):
-#         plant = Plant.query.filter_by(id=id).first()
-#         if plant:
-#             for attr in request.form:
-#                 setattr(plant, attr, request.form.get(attr))
-#             setattr(plant, "is_in_stock", False)
-#             db.session.add(plant)
-#             db.session.commit()
-#             plant_dict = plant.to_dict()
-#             return make_response(plant_dict, 200)
-#         else:
-#             raise NotFound
 
     def delete(self,id):
         restaurant = Restaurant.query.filter_by(id=id).first()
@@ -86,7 +61,60 @@ class RestaurantByID(Resource):
 
 
 api.add_resource(RestaurantByID, '/restaurants/<int:id>')
+class Pizzas(Resource):
 
+    def get(self):
+        pizzas = []
+        for pizza in Pizza.query.all():
+            pizza_dict={
+                "id": pizza.id,
+                "name": pizza.name,
+                "ingredients": pizza.ingredients
+            }
+            pizzas.append(pizza_dict)
+        return make_response(jsonify(pizzas), 200)
+api.add_resource(Pizzas, '/pizzas')
+
+class RestaurantPizzas(Resource):
+    def post(self):
+        data = request.get_json()
+
+        # Validate that the required fields are present in the request
+        if not all(key in data for key in ("price", "pizza_id", "restaurant_id")):
+            return make_response(jsonify({"errors": ["validation errors.include all keys"]}), 400)
+
+        price = data["price"]
+        pizza_id = data["pizza_id"]
+        restaurant_id = data["restaurant_id"]
+
+        # Check if the Pizza and Restaurant exist
+        pizza = Pizza.query.get(pizza_id)
+        restaurant = Restaurant.query.get(restaurant_id)
+
+        if not pizza or not restaurant:
+            return make_response(jsonify({"errors": ["validation errors pizza and restaurant dont exist"]}), 400)
+
+        # Create a new RestaurantPizza
+        restaurant_pizza = RestaurantPizza(
+            price = data["price"],
+            pizza_id = data["pizza_id"],
+            restaurant_id = data["restaurant_id"]
+
+        )
+
+        db.session.add(restaurant_pizza)
+        db.session.commit()
+
+        # Return data related to the Pizza
+        pizza_data = {
+            "id": pizza.id,
+            "name": pizza.name,
+            "ingredients": pizza.ingredients
+        }
+
+        return make_response(jsonify(pizza_data), 201)
+api.add_resource(RestaurantPizzas,'/restaurant_pizzas')   
+ 
 @app.errorhandler(NotFound)
 def handle_not_found(e):
     response = make_response(
