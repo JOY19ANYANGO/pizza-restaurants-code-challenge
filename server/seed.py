@@ -1,4 +1,4 @@
-from random import randint, choice as rc
+from random import randint, choice as rc,sample
 from faker import Faker
 from app import app
 from models import db, Pizza, RestaurantPizza, Restaurant
@@ -56,7 +56,7 @@ with app.app_context():
     pizzas = [
         Pizza(
             name=pizza_name,
-            ingredients=random.choice(pizza_ingredients)
+            ingredients=', '.join(sample(pizza_ingredients, 3)) 
         )
         for pizza_name in pizza_names
     ]
