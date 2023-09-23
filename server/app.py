@@ -74,19 +74,14 @@ class RestaurantByID(Resource):
 #         else:
 #             raise NotFound
 
-#     def delete(self,id):
-#         plant = Plant.query.filter_by(id=id).first()
-#         if plant:
-#             db.session.delete(plant)
-#             db.session.commit()
-#             response_body = {
-#                 "delete_successful": True,
-#                 "message": "Delete successful!"
-#             }
-
-#             return make_response('', 204)
-#         else:
-#             raise NotFound
+    def delete(self,id):
+        restaurant = Restaurant.query.filter_by(id=id).first()
+        if restaurant:
+            db.session.delete(restaurant)
+            db.session.commit()
+            return make_response("", 204)
+        else:
+            return make_response(jsonify({"error": "Restaurant not found"}), 404)
 
 
 
