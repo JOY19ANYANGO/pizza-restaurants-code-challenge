@@ -6,6 +6,7 @@ The database contains three tables:
 * A `Pizza` has many `Restaurants `through `RestaurantPizza`
 * A `RestaurantPizza` belongs to a Restaurant and belongs to a `Pizza`
 <img src="dbmodel.png" alt="Alt text" title="database model">
+
 ## Table of Contents
 - [Technologiesused](#technologiesused)
 - [Installation](#installation)
@@ -16,7 +17,8 @@ The database contains three tables:
 ## Technologies used
 ![python version](https://img.shields.io/badge/python-3.10.12+-blue.svg)
 ![pytest version](https://img.shields.io/badge/pytest-7.1.3+-cyan.svg)
-![sqlalchemy version](https://img.shields.io/badge/sqlalchemy-2.0%2B-blue.svg)
+![flask-sqlalchemy version](https://img.shields.io/badge/flasksqlalchemy-3.0.3-blue)
+![flask](https://img.shields.io/badge/Flask-2.2.2-red)
 
 ## Installation
 
@@ -60,6 +62,7 @@ The REST API allows  various HTTT methods:
    * Delete a restaurant.
    * Retrieve records of all pizzas.
    * Create a new restaurant_pizza.
+
 ###  Retrieve records of all restaurants.
 To retrieve records of all restaurants navigate to the following URL:`http://127.0.0.1:5555/restaurants`
 ### Retrieve one restaurant
@@ -67,23 +70,25 @@ To retrieve one restaurant use the following URL:`http://127.0.0.1:5555/restaura
 
 ### Delete one restaurant.
 We can delete a restaurant using postman.
-* Enter the following URL:`http://127.0.0.1:5555/restaurants/:id`.Replace id with the actual id of the    restaurant
-* Select the DELETE method and press send.
+1. Enter the following URL:`http://127.0.0.1:5555/restaurants/:id`.Replace id with the actual id of the    restaurant
+2. Select the DELETE method and press send.
 <img src="delee.png" alt="Alt text" title="delete">
-* When you press send again you should receive a response
+ When you press send again you should receive a response
 ```json
 {
   "error": "Restaurant not found"
 }
 ```
 This shows that the restaurant has been deleted hence it is no longer available.
+
 ### Retrieve records of all pizzas.
 To retrieve records of all restaurants navigate to the following URL:`http://127.0.0.1:5555/pizzas`
+
 ### Create a new restaurant_pizza.
 We can delete a restaurant using postman.
-* Enter the following URL:`http://127.0.0.1:5555/restaurant_pizzas`
-* Select the POST method.
-* In the request body enter the following.
+1. Enter the following URL:`http://127.0.0.1:5555/restaurant_pizzas`
+2. Select the POST method.
+3. In the request body enter the following.
 ```json
 {
   "price": 5,
