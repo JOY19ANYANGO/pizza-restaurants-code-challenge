@@ -13,12 +13,13 @@ class Pizza(db.Model, SerializerMixin):
     __tablename__ = 'pizzas'
 
     id = db.Column(db.Integer, primary_key=True)
-    name=db.Column(db.String)
+    name = db.Column(db.String)
     ingredients = db.Column(db.String)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     
-    restaurant_pizzas = db.relationship('RestaurantPizza', back_populates='pizza',overlaps="restaurant_pizzas")
+    # Define a back reference to the RestaurantPizza model
+    restaurant_pizza = db.relationship('RestaurantPizza', backref='pizza', overlaps="pizza")
     
     
 class RestaurantPizza(db.Model):
@@ -31,25 +32,26 @@ class RestaurantPizza(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
-    # Define the relationship to the Pizza model with a different back reference name
-    pizza = db.relationship('Pizza', backref='restaurant_pizza')
-    restaurant = db.relationship('Restaurant', backref='restaurant_pizza')
-
+    # Define a back reference to the Restaurant model
     @validates("price")
     def validate_price(self, key, value):
         if not (1 <= value <= 30):
-          raise ValueError("Price must be between 1 and 30")
+            raise ValueError("Price must be between 1 and 30")
         return value
+
+
 class Restaurant(db.Model, SerializerMixin):
     __tablename__ = 'restaurants'
    
-    
     id = db.Column(db.Integer, primary_key=True)
-    name=db.Column(db.String,unique=True, nullable=False)
-    address=db.Column(db.String)
+    name = db.Column(db.String, unique=True, nullable=False)
+    address = db.Column(db.String)
     
-    restaurant_pizzas = db.relationship('RestaurantPizza', back_populates='restaurant',overlaps="restaurant_pizza")
+    # Define a back reference to the RestaurantPizza model
+    restaurant_pizza = db.relationship('RestaurantPizza', backref='restaurant', overlaps="restaurant")
+    
     @validates("name")
-    def validate_name(self,key,name):
-        if name and len(name)>50:
-            raise ValueError("name must be less than 50 words in length")
+    def validate_name(self, key, name):
+        if name and len(name) > 50:
+            raise ValueError("Name must be less than 50 characters in length")
+        return name

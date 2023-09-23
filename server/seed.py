@@ -5,11 +5,46 @@ from models import db, Pizza, RestaurantPizza, Restaurant
 import random
 fake = Faker()
 
+
+pizza_names = [
+    "Margherita Pizza",
+    "Pepperoni Pizza",
+    "Hawaiian Pizza",
+    "BBQ Chicken Pizza",
+    "Veggie Supreme Pizza",
+    "Meat Lovers Pizza",
+    "Mushroom and Olive Pizza",
+    "Buffalo Chicken Pizza",
+    "Four Cheese Pizza",
+    "Pesto and Tomato Pizza",
+    # You can add more pizza names here
+]
+pizza_ingredients = [
+    "Dough",
+    "Tomato sauce",
+    "Mozzarella cheese",
+    "Pepperoni",
+    "Bell peppers",
+    "Onions",
+    "Mushrooms",
+    "Olives",
+    "Basil",
+    "Oregano",
+]
+
+
 with app.app_context():
+    db.session.query(RestaurantPizza).delete()
+    db.session.query(Pizza).delete()
+    db.session.query(Restaurant).delete()
+    
+    db.session.commit()
+      
     # Create and add fake restaurants
     restaurants = [
-        Restaurant(
-            name=fake.company(),
+        Restaurant( 
+            name = fake.company() ,
+
             address=fake.address()
         )
         for i in range(10)
@@ -20,10 +55,10 @@ with app.app_context():
     # Create and add fake pizzas
     pizzas = [
         Pizza(
-            name=fake.word(),
-            ingredients=', '.join(fake.words())
+            name=pizza_name,
+            ingredients=random.choice(pizza_ingredients)
         )
-        for i in range(10)
+        for pizza_name in pizza_names
     ]
     db.session.add_all(pizzas)  # Use db.session.add_all() to add the list
     db.session.commit()
