@@ -52,7 +52,19 @@ class RestaurantByID(Resource):
     def get(self, id):
         restaurant = Restaurant.query.filter_by(id=id).first()
         if restaurant:
-            restaurant_dict=restaurant.to_dict()
+            restaurant_dict={
+                "id": restaurant.id,
+                "name": restaurant.name,
+                "address": restaurant.address,
+                "pizzas":[
+                    {
+                        "id": restaurant_pizza.pizza.id,
+                        "name": restaurant_pizza.pizza.name,
+                        "ingredients": restaurant_pizza.pizza.ingredients
+                    }
+                    for restaurant_pizza in restaurant.pizzas
+                ]
+            }
             return make_response(jsonify(restaurant_dict), 200)
         else:
             return make_response(jsonify({"error": "Restaurant not found"}), 404)
