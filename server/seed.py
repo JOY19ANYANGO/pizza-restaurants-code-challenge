@@ -5,7 +5,7 @@ from models import db, Pizza, RestaurantPizza, Restaurant
 import random
 fake = Faker()
 
-
+# creates pizza list
 pizza_names = [
     "Margherita Pizza",
     "Pepperoni Pizza",
@@ -17,8 +17,9 @@ pizza_names = [
     "Buffalo Chicken Pizza",
     "Four Cheese Pizza",
     "Pesto and Tomato Pizza",
-    # You can add more pizza names here
+   
 ]
+# list of pizza ingredients
 pizza_ingredients = [
     "Dough",
     "Tomato sauce",
@@ -32,7 +33,7 @@ pizza_ingredients = [
     "Oregano",
 ]
 
-
+# delete any existing data
 with app.app_context():
     db.session.query(RestaurantPizza).delete()
     db.session.query(Pizza).delete()

@@ -20,7 +20,7 @@ class Pizza(db.Model, SerializerMixin):
     
     restaurants = db.relationship('RestaurantPizza', back_populates='pizza')
     
-    
+    # create resaurant_pizza object
 class RestaurantPizza(db.Model):
     __tablename__ = 'restaurant_pizzas'
     serialize_rules = ('restaurant', 'pizza')
@@ -42,7 +42,7 @@ class RestaurantPizza(db.Model):
             raise ValueError("Price must be between 1 and 30")
         return value
 
-
+# create restaurant tablee
 class Restaurant(db.Model, SerializerMixin):
     __tablename__ = 'restaurants'
     serialize_rules = ('-pizzas.restaurant', '-restaurant.pizzas')
@@ -53,7 +53,7 @@ class Restaurant(db.Model, SerializerMixin):
     
     # Define a back reference to the RestaurantPizza model
     pizzas = db.relationship('RestaurantPizza', back_populates='restaurant')
-    
+   # ensure that the  name is less than 50 characters 
     @validates("name")
     def validate_name(self, key, name):
         if name and len(name) > 50:

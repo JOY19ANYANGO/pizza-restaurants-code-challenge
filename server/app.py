@@ -18,6 +18,7 @@ migrate = Migrate(app, db)
 db.init_app(app)
 
 api = Api(app)
+# create a response for landing page
 
 class Home(Resource):
     def get(self):
@@ -28,9 +29,9 @@ class Home(Resource):
 
 
 api.add_resource(Home, '/')
-
+# deals with restaurant routes 
 class Restaurants(Resource):
-
+# get all restaurants 
     def get(self):
         restaurants = []
         for restaurant  in Restaurant.query.all():
@@ -46,9 +47,9 @@ class Restaurants(Resource):
 
 api.add_resource(Restaurants, '/restaurants')
 
-
+# deals with restaurant routes
 class RestaurantByID(Resource):
-
+# get restaurants by id 
     def get(self, id):
         restaurant = Restaurant.query.filter_by(id=id).first()
         if restaurant:
@@ -69,7 +70,7 @@ class RestaurantByID(Resource):
         else:
             return make_response(jsonify({"error": "Restaurant not found"}), 404)
 
-
+# delete a restaurant
     def delete(self,id):
         restaurant = Restaurant.query.filter_by(id=id).first()
         if restaurant:
@@ -82,6 +83,7 @@ class RestaurantByID(Resource):
 
 
 api.add_resource(RestaurantByID, '/restaurants/<int:id>')
+# deals with  pizzas routes
 class Pizzas(Resource):
 
     def get(self):
@@ -96,6 +98,7 @@ class Pizzas(Resource):
         return make_response(jsonify(pizzas), 200)
 api.add_resource(Pizzas, '/pizzas')
 
+# deals with api routes
 class RestaurantPizzas(Resource):
     def post(self):
         data = request.get_json()
@@ -135,7 +138,7 @@ class RestaurantPizzas(Resource):
 
         return make_response(jsonify(pizza_data), 201)
 api.add_resource(RestaurantPizzas,'/restaurant_pizzas')   
- 
+ # deals with not found errors
 @app.errorhandler(NotFound)
 def handle_not_found(e):
     response = make_response(
